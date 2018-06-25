@@ -56,8 +56,8 @@ LICENSE.txt  NOTICE.txt  README.textile  bin  config  lib  logs  modules  nohup.
 root@59431ac10dd6:/opt/elasticsearch-6.2.4# su elastic
 $ nohup bin/elasticsearch &
 ```
-验证：访问http://【宿主机IP】:9200/
-![9200]('readme/9200.png')
+验证：访问http://【宿主机IP】:9200/  <br/>
+![9200]('9200.png')
 
 #### 启动elastic-head
 ```shell
@@ -65,5 +65,5 @@ root@59431ac10dd6:/opt# cd elasticsearch-head-master/
 root@59431ac10dd6:/opt/elasticsearch-head-master# source /etc/profile
 root@59431ac10dd6:/opt/elasticsearch-head-master# nohup grunt server &
 ```
-验证：访问http://【宿主机IP】:9100/
-![9100]('readme/9100.png')
+验证：访问http://【宿主机IP】:9100/ <br/>
+![9100]('9100.png')
