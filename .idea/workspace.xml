@@ -65,7 +65,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="54" />
     <option name="y" value="167" />
     <option name="width" value="1382" />
@@ -89,6 +89,21 @@
               <item name="bigLog" type="b2602c69:ProjectViewProjectNode" />
               <item name="bigLog" type="462c0819:PsiDirectoryNode" />
               <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bigLog" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bigLog" type="462c0819:PsiDirectoryNode" />
+              <item name="logManage" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bigLog" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bigLog" type="462c0819:PsiDirectoryNode" />
+              <item name="storageEngine" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bigLog" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bigLog" type="462c0819:PsiDirectoryNode" />
+              <item name="venv" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
