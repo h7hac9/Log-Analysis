@@ -12,7 +12,7 @@
 |-requirements.txt    python库管理<br/>
 |-log         需要将待分析的日志文件放在log文件夹下，日志文件名格式为：域名-access-年月日.log.gz ,如：knownsec.com-access20180625.log.gz<br/>
 |-logManage<br/> 
-  |- logformat.ini  日志归一化配置文件，可以自定义归一化配置，具体编写规范，参照.ini文件编写规范<br/>
+&nbsp;&nbsp;|-&nbsp;logformat.ini  日志归一化配置文件，可以自定义归一化配置，具体编写规范，参照.ini文件编写规范<br/>
 |-config<br/>
-  |- config.ini     报警规则配置文件，可以在原有的大类中编辑rules规则，暂时不支持添加新的大类<br/>
-  |- task.ini       运行日志分析时产生的.ini文件，每次结束分析任务后，需要手动将其删除<br/>
+&nbsp;&nbsp;|-&nbsp;config.ini     报警规则配置文件，可以在原有的大类中编辑rules规则，暂时不支持添加新的大类<br/>
+&nbsp;&nbsp;|-&nbsp;task.ini       运行日志分析时产生的.ini文件，每次结束分析任务后，需要手动将其删除<br/>
