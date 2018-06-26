@@ -6,7 +6,7 @@
 
 * 分析步骤=> 首先将日志正则归一化处理，之后将日志传入到elasticsearch中进行分析，结果暂时打印到命令行窗口。
 
-##一、文件说明
+## 一、文件说明
 
 |-venv.zip    python运行环境，解压缩后放在项目根目录，运行项目时，需要使用venv里面的python来运行<br/>
 |-requirements.txt    python库管理<br/>
@@ -17,7 +17,7 @@
 &nbsp;&nbsp;|-&nbsp;config.ini     报警规则配置文件，可以在原有的大类中编辑rules规则，暂时不支持添加新的大类<br/>
 &nbsp;&nbsp;|-&nbsp;task.ini       运行日志分析时产生的.ini文件，每次结束分析任务后，需要手动将其删除<br/>
 
-##二、Docker镜像
+## 二、Docker镜像
 
 该项目主要架构是将日志文件经过归一化处理之后存放到Elasticsearch中，之后使用Elasticsearch的API对日志进行分析。<br>
 本项目配套的Docker下方法为：
@@ -73,9 +73,9 @@ root@59431ac10dd6:/opt/elasticsearch-head-master# nohup grunt server &
 
 --------------------
 
-##四、版本更新：
+## 四、版本更新：
 
-###2018/06/26：
+### 2018/06/26：
 1. 脚本中集成了在上传日志到elasticsearch之前首先将`refresh_interval`关闭以加快elasticsearch的写入速度，本质上要想提升elasticsearch的写入速度还是要从硬件入手
 2. 在结束日志分析任务时，程序会提示是否将之前存入到elasticsearch中的日志进行抹除。
 3. 该项目已经全部集成到docker容器中，在使用时，需要将日志文件存放到`~/Log_Analysis/log`文件夹中，之后通过上述Docker 容器配置操作之后，执行`python start.py`命令开始进行日志分析。
