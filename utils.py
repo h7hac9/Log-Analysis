@@ -20,16 +20,35 @@ class Query(object):
         """
 
         :param index:  elasricsearch id
-        :param body:   请求主体
+        :param data:   请求主体
         :return:
         """
         if index is None:
             target_uri = "http://{}:{}/_search".format(self.ip, self.port)
         else:
             target_uri = "http://{}:{}/{}/_search".format(self.ip,self.port,index)
-        response = requests.post(url=target_uri,data=data,headers={"Content-Type": "application/json"})
+        response = requests.post(url=target_uri, data=data, headers={"Content-Type": "application/json"})
 
         return json.loads(response.text)
+
+    def delete(self, index):
+        """
+
+        :param index: elasricsearch id
+        :return:
+        """
+        target_uri = "http://{}:{}/{}".format(self.ip,self.port,index)
+        response = requests.delete(url=target_uri, headers={"Content-Type": "application/json"})
+
+        print(json.loads(response.text))
+
+    def setting(self, index, data):
+        target_uri = "http://{}:{}/{}/_settings".format(self.ip, self.port, index)
+        response = requests.put(url=target_uri, data=data, headers={"Content-Type": "application/json"})
+
+    def put(self, index, data):
+        target_uri = "http://{}:{}/{}/".format(self.ip, self.port, index)
+        response = requests.put(url=target_uri, data=data, headers={"Content-Type": "application/json"})
 
 
 class BaseFunction(object):

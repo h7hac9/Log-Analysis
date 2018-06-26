@@ -8,10 +8,11 @@ import ConfigParser
 
 from logManage import format, analysis
 from storageEngine import elasticEngine
+from utils import Query
 
 
 def main():
-    # read_log_file()  # 读取日志文件并存储到elasticsearch
+    read_log_file()  # 读取日志文件并存储到elasticsearch
     print("【!】日志上传操作任务完成........")
     print("【+】日志分析操作任务开启........")
     top_analysis = analysis.TopAnalysis()
@@ -35,6 +36,38 @@ def main():
 
     print("【+】XSS攻击 日志检测任务开启........")
     analysis.SecureAnalysis.xss_analysis()
+
+    print("日志分析结束，是否删除elasticsearch留存的数据(Y/N):")
+    print("tips:正常情况下是需要全部清空elasticsearch中的日志的")
+    choose = raw_input("请输入：")
+    if choose=="Y" or choose=="y":
+        task_end()
+    else:
+        print("[*]日志分析结束，程序正常退出........")
+
+
+def task_end():
+    config = ConfigParser.ConfigParser()
+    config.read(os.path.join(os.path.dirname(__file__),'config/task.ini'))
+    elasticsearch_id = config.get("elasticsearch_id", 'id')
+    for id in elasticsearch_id.split(','):
+        Query().delete(index=id)
+    os.remove("config/task.ini")
+
+
+def upload_start(index):
+    """
+    关闭刷新，加快elasticsearch导入数据速度
+    :param index: elastic search id
+    :return:
+    """
+    data = '{"index": {"refresh_interval": "-1"}}'
+    Query().setting(index=index, data=data)
+
+
+def upload_stop(index):
+    data = '{"index": {"refresh_interval": "10"}}'
+    Query().setting(index=index, data=data)
 
 
 def threat_intelligence_check(top_analysis):
@@ -70,6 +103,8 @@ def read_log_file():
     for root, path, files in os.walk('log'):
         for file in files:
             id = id + file.split('-')[2].split('.')[0]+","
+            Query().put(index=file.split('-')[2].split('.')[0], data="")   #创建elasticsearch id
+            upload_start(index=file.split('-')[2].split('.')[0])
             with gzip.open(os.path.join(root, file), 'r') as f:
                 size = 0
                 line = f.readlines().__len__()
@@ -81,7 +116,7 @@ def read_log_file():
                 logline = f.readline()
                 print("【+】{} 开始上传........".format(file))
                 while logline != "":
-                    for i in xrange(5000):
+                    for i in xrange(50000):
                         if logline != "":
                             loglinemanage = format.LogClass(log=logline)
                             logformat.append(loglinemanage.formatting())
@@ -90,18 +125,15 @@ def read_log_file():
                     elasticE.saveMessage(logformat, file.split('-')[2].split('.')[0])
                     logformat = []
 
-                    size = size + 5000
+                    size = size + 50000
                     view_bar(size, line)
+            upload_stop(index=file.split('-')[2].split('.')[0])
             print("->")
 
         print("【!】写入配置文件........")
         config.set('elasticsearch_id', 'id', id.rstrip(','))
         config.write(open('config/task.ini', 'w'))
         print("【!】配置文件写入成功........【task.ini】")
-
-
-def sql_injection():
-    pass
 
 
 def view_bar(num, total):
