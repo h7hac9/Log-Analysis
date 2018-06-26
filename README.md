@@ -79,3 +79,7 @@ root@59431ac10dd6:/opt/elasticsearch-head-master# nohup grunt server &
 1. 脚本中集成了在上传日志到elasticsearch之前首先将`refresh_interval`关闭以加快elasticsearch的写入速度，本质上要想提升elasticsearch的写入速度还是要从硬件入手
 2. 在结束日志分析任务时，程序会提示是否将之前存入到elasticsearch中的日志进行抹除。
 3. 该项目已经全部集成到docker容器中，在使用时，需要将日志文件存放到`~/Log_Analysis/log`文件夹中，之后通过上述Docker 容器配置操作之后，执行`python start.py`命令开始进行日志分析。
+4. 新版docker下载地址：
+```shell
+docker pull dockerlucifer/elasticsearch:v2.0.0
+```
