@@ -83,3 +83,35 @@ root@59431ac10dd6:/opt/elasticsearch-head-master# nohup grunt server &
 ```shell
 docker pull dockerlucifer/elasticsearch:v2.0.0
 ```
+
+### 2018/06/27:
+1. 重新制作docker镜像，docker镜像升级到v2.0.7版本
+```shell
+#docker镜像下载方法:
+docker pull dockerlucifer/elasticsearch:v2.0.7
+```
+或者通过本程序提供的dockerfile手动生成本程序需求的镜像
+```shell
+# 使用命令
+docker build -t elasticsearch_test .
+
+#elasticsearch_test即为生成好的镜像名
+```
+2. 镜像使用方法改变：
+```shell
+docker run -p 9100:9100 -p 9200:9200 -p 20:20 elasticsearch_test(或者是dockerlucifer/elasticsearch:v2.0.7)
+```
+其中9100依旧为elasticsearch_head端口、9200为elasticsearch端口，如果需要使用命令行则使用20端口进行连接
+docker 容器的账户:密码为：`root:toor`
+
+docker容器中提供的lrasz工具包，可以通过`rz`命令将日志传入到log文件夹中。注意：日志的格式暂时只支持.log.gz
+
+在运行程序之前需要先行在OTX官网注册OTX的key，将OTX的key填写到`config/config.ini`文件中
+```shell
+example:
+
+[OTX_Token]
+key=******************************************************
+```
+
+完成之后即可通过start.py运行程序
