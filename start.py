@@ -17,7 +17,7 @@ def main():
     print("【+】日志分析操作任务开启........")
     top_analysis = analysis.TopAnalysis()
 
-    # threat_intelligence_check(top_analysis)  #威胁情报分析检测
+    threat_intelligence_check(top_analysis)  #威胁情报分析检测
 
     config = ConfigParser.ConfigParser()
     config.read(r'config/task.ini')
@@ -87,10 +87,14 @@ def top_analysis_check(top_analysis):
     config.read(r'config/task.ini')
 
     elasticsearch_id = config.get('elasticsearch_id', 'id')  # 读取配置文件中的id信息
-    for i in elasticsearch_id.split(','):
-        result = top_analysis.normal_analysis(n=5, index=i)
-        normal_top_result.append(result)
+    if ',' not in elasticsearch_id:
+        result = top_analysis.normal_analysis(n=5, index=elasticsearch_id)
         print(result)
+    else:
+        for i in elasticsearch_id.split(','):
+            result = top_analysis.normal_analysis(n=5, index=i)
+            normal_top_result.append(result)
+            print(result)
     print("【!】Top 分析结束........")
     return normal_top_result
 
