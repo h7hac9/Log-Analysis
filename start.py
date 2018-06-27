@@ -55,21 +55,6 @@ def task_end():
     os.remove("config/task.ini")
 
 
-def upload_start(index):
-    """
-    关闭刷新，加快elasticsearch导入数据速度
-    :param index: elastic search id
-    :return:
-    """
-    data = '{"index": {"refresh_interval": "-1"}}'
-    Query().setting(index=index, data=data)
-
-
-def upload_stop(index):
-    data = '{"index": {"refresh_interval": "1s"}}'
-    Query().setting(index=index, data=data)
-
-
 def threat_intelligence_check(top_analysis):
     normal_top_result = top_analysis_check(top_analysis)
     print("【+】OTX IP威胁情报检测任务开始........")
@@ -104,7 +89,6 @@ def read_log_file():
         for file in files:
             id = id + file.split('-')[2].split('.')[0]+","
             Query().put(index=file.split('-')[2].split('.')[0], data="")   #创建elasticsearch id
-            upload_start(index=file.split('-')[2].split('.')[0])
             with gzip.open(os.path.join(root, file), 'r') as f:
                 size = 0
                 line = f.readlines().__len__()
@@ -127,7 +111,6 @@ def read_log_file():
 
                     size = size + 50000
                     view_bar(size, line)
-            upload_stop(index=file.split('-')[2].split('.')[0])
             print("->")
 
         print("【!】写入配置文件........")
