@@ -66,7 +66,7 @@ def upload_start(index):
 
 
 def upload_stop(index):
-    data = '{"index": {"refresh_interval": "10"}}'
+    data = '{"index": {"refresh_interval": "10s"}}'
     Query().setting(index=index, data=data)
 
 
