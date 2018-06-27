@@ -107,11 +107,12 @@ class BaseFunction(object):
                     result_ip.append(i.get('_source').get('ip_address'))
 
             for ip in list(set(result_ip)):
-                print(ip + "危险访问操作")
+                print(ip),
+                print("  危险访问操作")
                 for i in result.get('hits').get('hits'):
                     if i.get('_source').get('ip_address') == ip:
-                        print('【-】 ' + i.get('_source').get('URI') + " " + i.get('_source').get('domain') +
-                              " " + i.get('_source').get('method') + " " + i.get('_source').get('statuscode'))
+                        print('【-】 '),
+                        print(i.get('_source').get('URI') + " " + i.get('_source').get('domain') +" " + i.get('_source').get('method') + " " + i.get('_source').get('statuscode'))
         else:
             print(none_message)
 
