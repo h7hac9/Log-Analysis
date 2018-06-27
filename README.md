@@ -104,6 +104,8 @@ docker run -p 9100:9100 -p 9200:9200 -p 20:20 elasticsearch_test(或者是docker
 其中9100依旧为elasticsearch_head端口、9200为elasticsearch端口，如果需要使用命令行则使用20端口进行连接
 docker 容器的账户:密码为：`root:toor`
 
+在启动容器之后推荐将本地的代码进行更新
+
 docker容器中提供的lrasz工具包，可以通过`rz`命令将日志传入到log文件夹中。注意：日志的格式暂时只支持.log.gz
 
 在运行程序之前需要先行在OTX官网注册OTX的key，将OTX的key填写到`config/config.ini`文件中
