@@ -66,7 +66,7 @@ def upload_start(index):
 
 
 def upload_stop(index):
-    data = '{"index": {"refresh_interval": "10s"}}'
+    data = '{"index": {"refresh_interval": "1s"}}'
     Query().setting(index=index, data=data)
 
 
@@ -87,14 +87,10 @@ def top_analysis_check(top_analysis):
     config.read(r'config/task.ini')
 
     elasticsearch_id = config.get('elasticsearch_id', 'id')  # 读取配置文件中的id信息
-    if ',' not in elasticsearch_id:
-        result = top_analysis.normal_analysis(n=5, index=elasticsearch_id)
+    for i in elasticsearch_id.split(','):
+        result = top_analysis.normal_analysis(n=5, index=i)
+        normal_top_result.append(result)
         print(result)
-    else:
-        for i in elasticsearch_id.split(','):
-            result = top_analysis.normal_analysis(n=5, index=i)
-            normal_top_result.append(result)
-            print(result)
     print("【!】Top 分析结束........")
     return normal_top_result
 
