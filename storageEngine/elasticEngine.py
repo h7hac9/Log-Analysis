@@ -1,10 +1,14 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
+import ConfigParser
+import os
+
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 import elasticsearch.helpers
 
+from utils import Query
 
 class elasticManage(object):
     def __init__(self):
@@ -52,3 +56,43 @@ class elasticManage(object):
             for d in tmp
         ]
         elasticsearch.helpers.bulk(self.es, actions)
+
+
+class ElasticOptimization(object):
+    """
+    elasticsearch 上传数据优化类
+    """
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def start_optimization(index):
+        """
+        优化elasticsearch setting ，加快数据上传速度
+        :param index: elasticsearch index
+        :return:
+        """
+        print("优化任务开启.........")
+        config = ConfigParser.ConfigParser()
+        config.read(os.path.join(os.path.dirname(os.path.dirname(__file__)),'config/config.ini'))
+        max_bytes_per_sec = config.get("Optimization_Config", "max_bytes_per_sec")
+        Query().setting(index=index, data='"persistent" : {{"indices.store.throttle.max_bytes_per_sec" : "{0}mb"}}'.format(max_bytes_per_sec))
+
+        Query().setting(index=index, data='"transient" : {"indices.store.throttle.type" : "none" }')
+
+        Query().setting(index=index, data='{"index": {"refresh_interval": "-1"}}')
+
+    @staticmethod
+    def restore_settings(index):
+        """
+        恢复elasticsearch setting 更改，方便数据分析查询
+        :param index: elasticsearch index
+        :return:
+        """
+
+        print("还原配置.........")
+        Query().setting(index=index, data='"persistent" : {{"indices.store.throttle.max_bytes_per_sec" : "20mb"}}')
+
+        Query().setting(index=index, data='"transient" : {"indices.store.throttle.type" : "merge" }')
+
+        Query().setting(index=index, data='{"index": {"refresh_interval": "1s"}}')

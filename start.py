@@ -53,13 +53,11 @@ def upload_start(index):
     :param index: elastic search id
     :return:
     """
-    data = '{"index": {"refresh_interval": "-1"}}'
-    Query().setting(index=index, data=data)
+    elasticEngine.ElasticOptimization.start_optimization(index=index)
 
 
 def upload_stop(index):
-    data = '{"index": {"refresh_interval": "1s"}}'
-    Query().setting(index=index, data=data)
+    elasticEngine.ElasticOptimization.restore_settings(index=index)
 
 
 def task_end():
@@ -109,7 +107,7 @@ def read_log_file():
             line_number = 0
             size = 0
             with gzip.open(os.path.join(root, file), 'r') as f:
-                while f.readline() is not None:
+                while f.readline() != "":
                     line_number += 1
             
             print("【!】文件读取成功........")
