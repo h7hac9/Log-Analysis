@@ -5,6 +5,7 @@ import os
 import gzip
 import sys
 import ConfigParser
+import time
 
 from logManage import format, analysis
 from storageEngine import elasticEngine
@@ -44,6 +45,21 @@ def main():
         task_end()
     else:
         print("[*]日志分析结束，程序正常退出........")
+
+
+def upload_start(index):
+    """
+    关闭刷新，加快elasticsearch导入数据速度
+    :param index: elastic search id
+    :return:
+    """
+    data = '{"index": {"refresh_interval": "-1"}}'
+    Query().setting(index=index, data=data)
+
+
+def upload_stop(index):
+    data = '{"index": {"refresh_interval": "1s"}}'
+    Query().setting(index=index, data=data)
 
 
 def task_end():
@@ -89,6 +105,7 @@ def read_log_file():
         for file in files:
             id = id + file.split('-')[2].split('.')[0]+","
             Query().put(index=file.split('-')[2].split('.')[0], data="")   #创建elasticsearch id
+            upload_start(index=file.split('-')[2].split('.')[0])
             with gzip.open(os.path.join(root, file), 'r') as f:
                 size = 0
                 line = f.readlines().__len__()
@@ -100,7 +117,7 @@ def read_log_file():
                 logline = f.readline()
                 print("【+】{} 开始上传........".format(file))
                 while logline != "":
-                    for i in xrange(50000):
+                    for i in xrange(100000):
                         if logline != "":
                             loglinemanage = format.LogClass(log=logline)
                             logformat.append(loglinemanage.formatting())
@@ -109,8 +126,10 @@ def read_log_file():
                     elasticE.saveMessage(logformat, file.split('-')[2].split('.')[0])
                     logformat = []
 
-                    size = size + 50000
+                    size = size + 100000
                     view_bar(size, line)
+            upload_stop(index=file.split('-')[2].split('.')[0])
+            time.sleep(5)
             print("->")
 
         print("【!】写入配置文件........")
