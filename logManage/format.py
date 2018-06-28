@@ -18,7 +18,11 @@ class LogClass(object):
             regular = self.log_format_config.get(i, 'log_format')  # 正则表达式
             try:
                 r = re.match(regular, self.log)
-                return r.groupdict()
+                result = r.groupdict()
             except Exception as e:
-                print(u"【error】日志格式化出现异常，异常前日志为：{},检测规则为：{}".format(self.log, i))
-                exit(-1)
+                result = None
+
+        if result is not None:
+            return result
+        else:
+            print("ERROR")
