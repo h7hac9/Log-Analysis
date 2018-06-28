@@ -106,9 +106,11 @@ def read_log_file():
             id = id + file.split('-')[2].split('.')[0]+","
             Query().put(index=file.split('-')[2].split('.')[0], data="")   #创建elasticsearch id
             upload_start(index=file.split('-')[2].split('.')[0])
+            line_number = 0
+            size = 0
             with gzip.open(os.path.join(root, file), 'r') as f:
-                size = 0
-                line = f.readlines().__len__()
+                while f.readline() is not None:
+                    line_number += 1
             
             print("【!】文件读取成功........")
 
@@ -127,7 +129,7 @@ def read_log_file():
                     logformat = []
 
                     size = size + 100000
-                    view_bar(size, line)
+                    view_bar(size, line_number)
             upload_stop(index=file.split('-')[2].split('.')[0])
             time.sleep(5)
             print("->")

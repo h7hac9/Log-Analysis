@@ -8,7 +8,7 @@ import elasticsearch.helpers
 
 class elasticManage(object):
     def __init__(self):
-        self.es = Elasticsearch("127.0.0.1:9200")
+        self.es = Elasticsearch("127.0.0.1:9200", timeout=30)
 
     def connect_elastic(self):
         """
