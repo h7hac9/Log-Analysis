@@ -8,6 +8,9 @@ from utils import Query
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+import cPickle
+import re
+import numpy
 
 from storageEngine.elasticEngine import elasticManage
 from utils import BaseFunction, Query
@@ -100,3 +103,106 @@ class SecureAnalysis(object):
         query_data = BaseFunction.join_query(keyword="URI" ,rule_name="xss_analysis")
         result = Query().query(None, data=query_data)
         BaseFunction.result_dispose(result, index=None, query=query_data, none_message="========XSS攻击分析未检测到威胁========")
+
+
+class ML_Analysis(object):
+    """
+    机器学习分析检测模块
+    """
+    def __init__(self):
+        pass
+
+    def get_len(self, url):
+        return len(url)
+
+    def get_url_count(self, url):
+        if re.search('(http://)|(https://)', url, re.IGNORECASE):
+            return 1
+        else:
+            return 0
+
+    def get_evil_char(self, url):
+        return len(re.findall("[<>,\'\"/]", url, re.IGNORECASE))
+
+    def get_evil_word(self, url):
+        return len(re.findall(
+            "(alert)|(script=)(%3c)|(%3e)|(%20)|(onerror)|(onload)|(eval)|(src=)|(prompt)|(onmouseon)|(onmouseover)|(/\*)|(\*/)",
+            url, re.IGNORECASE))
+
+    def get_feature(self, url):
+        return [self.get_len(url), self.get_url_count(url), self.get_evil_char(url), self.get_evil_word(url)]
+
+    def xss_analysis(self):
+        urls = []
+        clf = None
+        data = """
+        {
+          "aggs": {
+            "group_by_uri": {
+              "terms": {
+                "field": "URI.keyword",
+                "size": 2147483647
+              }
+            }
+          },
+          "size": 0
+        }
+        """
+        result = Query().query(index=None, data=data)   #返回所有去重之后的URI列表
+        for result_message in result.get("aggregations").get("group_by_uri").get("buckets"):
+            urls.append(result_message.get('key')) #得到elasticsearch中所有的经过去重后的URI信息
+
+        with open("ML/xss_ML.pkl", 'rb') as f:
+            clf = cPickle.load(f)
+
+        for url in urls:
+            result = clf.predict(numpy.mat(self.get_feature(url=url)))
+            if result[0] == 1:
+                data = """
+                {{
+                  "query": {{
+                    "match": {{
+                      "URI": "{0}"
+                    }}
+                  }},
+                  "aggs": {{
+                    "group_by_ip_address": {{
+                      "terms": {{
+                        "field": "ip_address.keyword",
+                        "size": 2147483647
+                      }}
+                    }}
+                  }}
+                }}
+                """.format(url)    #根据URI反查IP地址
+                result = Query().query(index=None, data=data)
+                buckets = result.get("aggregations").get("group_by_ip_address").get("buckets")
+                if len(buckets) > 20:
+                    print(url+"  "),
+                    print("反查其IP数为{},可能为误报".format(len(buckets)))
+                else:
+                    print(url)
+                    data = """
+                                    {{
+                                      "query": {{
+                                        "match": {{
+                                          "URI": "{0}"
+                                        }}
+                                      }},
+                                      "aggs": {{
+                                        "group_by_ip_address": {{
+                                          "terms": {{
+                                            "field": "ip_address.keyword",
+                                            "size": 2147483647
+                                          }}
+                                        }}
+                                      }}
+                                    }}
+                                    """.format(url)  # 根据URI反查IP地址
+                    result = Query().query(index=None, data=data)
+                    buckets = result.get("aggregations").get("group_by_ip_address").get("buckets")
+                    print("产生此URL的ip地址为：")
+                    for bucket in buckets:
+                        print(bucket.get("key"))
+
+

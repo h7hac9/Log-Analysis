@@ -13,12 +13,12 @@ from utils import Query
 
 
 def main():
-    read_log_file()  # 读取日志文件并存储到elasticsearch
+    # read_log_file()  # 读取日志文件并存储到elasticsearch
     print("【!】日志上传操作任务完成........")
     print("【+】日志分析操作任务开启........")
     top_analysis = analysis.TopAnalysis()
 
-    threat_intelligence_check(top_analysis)  #威胁情报分析检测
+    # threat_intelligence_check(top_analysis)  #威胁情报分析检测
 
     config = ConfigParser.ConfigParser()
     config.read(r'config/task.ini')
@@ -37,6 +37,9 @@ def main():
 
     print("【+】XSS攻击 日志检测任务开启........")
     analysis.SecureAnalysis.xss_analysis()
+
+    print("【+】机器学习检测XSS攻击[开发阶段]")
+    analysis.ML_Analysis().xss_analysis()
 
     print("日志分析结束，是否删除elasticsearch留存的数据(Y/N):")
     print("tips:正常情况下是需要全部清空elasticsearch中的日志的")
